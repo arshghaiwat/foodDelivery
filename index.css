@@ -76,3 +76,9 @@
   display: flex;
   gap: 10px;
 }
+
+.user-card{
+  padding: 10px;
+  margin: 10px;
+  border: 1px solid black;
+}
