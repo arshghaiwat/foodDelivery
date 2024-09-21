@@ -2,30 +2,20 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { MENU_API } from "../utils/constants";
 import Shimmer from "./Shimmer";
+import useRestaurantMenu from "../utils/useRestaurantMenu";
 
 const RestaurantMenu = () => {
-  const [resInfo, setResInfo] = useState(null);
-
   const { resId } = useParams();
-  console.log("para");
-  console.log(resId);
 
-  useEffect(() => {
-    fetchMenu();
-  }, []);
-
-  const fetchMenu = async () => {
-    const data = await fetch(MENU_API + resId);
-
-    const json = await data.json();
-    // console.log("data");
-    // console.log(json);
-    setResInfo(json.data);
-    // console.log(resInfo);
-  };
+  const resInfo = useRestaurantMenu(resId);
 
   if (resInfo === null) {
-    return <Shimmer />;
+    return (
+      <div>
+        <h1>idsfhdkf</h1>
+        <Shimmer />
+      </div>
+    );
   }
 
   const { name, cuisines, costForTwoMessage } =
@@ -48,10 +38,13 @@ const RestaurantMenu = () => {
     itemCardsFirst = regularCards3;
   }
 
-  const { itemCards } = itemCardsFirst;
-  // const { itemCards } =
-  // resInfo?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards[2]?.card?.card?.categories[0] || resInfo?.cards[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards[2]?.card?.card ;
-  // console.log(itemCards);
+  let itemCards = null;
+
+  try {
+     ({ itemCards } = itemCardsFirst);
+  } catch (error) {
+    return( <div><h1>not able to get data at the moment</h1></div>);
+  }
 
   return (
     <div className="menu">
