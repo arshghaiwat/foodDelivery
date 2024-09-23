@@ -9,6 +9,8 @@ import RestaurantMenu from "./components/RestaurantMenu";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import Shimmer from "./components/Shimmer";
 
+
+//bundling
 const Grocery = lazy(() => import("./components/Grocery"));
 
 const AppLayout = () => {

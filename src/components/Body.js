@@ -38,22 +38,23 @@ const Body = () => {
 
   const onlineStatus = useOnlineStatus();
 
-  if(onlineStatus === false){
-    return <h1>you are offline buddy!</h1>
+  if (onlineStatus === false) {
+    return <h1>you are offline buddy!</h1>;
   }
   //conditional rendering
   // if(listOfRestaurants.length === 0){
   //   return (<Shimmer/>);
   // }
 
-  return listOfRestaurants.length === 0 ? (
+  return listOfRestaurants?.length === 0 ? (
     <Shimmer />
   ) : (
-    <div className="body">
-      <div className="filter">
-        <div className="search">
+    <div className="mx-8" >
+      <div className="flex gap-0 mt-6 mb-10 mx-8">
+        <div className="flex gap-2 ">
           <input
-            className="search-box"
+            className="border border-black rounded-md px-2"
+            placeholder="Search Restaurant"
             type="text"
             value={searchText}
             onChange={(event) => {
@@ -61,6 +62,7 @@ const Body = () => {
             }}
           ></input>
           <button
+            className="h-8 w-14 border border-black bg-green-200 rounded-md"
             onClick={() => {
               const filterList = listOfRestaurants.filter((restaurant) =>
                 restaurant.info.name
@@ -73,25 +75,31 @@ const Body = () => {
           >
             Search
           </button>
-          <div className="search-rating">
-            <button
-              className="filter-btn"
-              onClick={() => {
-                const filterList = listOfRestaurants.filter(
-                  (restaurant) => restaurant.info.avgRatingString >= 4.3
-                );
-                setFilterRestaurant(filterList);
-              }}
-            >
-              Filter By Rating
-            </button>
-          </div>
+        </div>
+        <div className="ml-7">
+          <button
+            className="border border-black h-8 bg-gray-300 rounded-md px-1"
+            onClick={() => {
+              const filterList = listOfRestaurants.filter(
+                (restaurant) => restaurant.info.avgRatingString >= 4.3
+              );
+              setFilterRestaurant(filterList);
+            }}
+          >
+            Filter By Rating
+          </button>
         </div>
       </div>
-      <div className="res-container">
+
+      <div className="m-auto flex gap-7 flex-wrap justify-center">
         {/* <RestaurantCard resData={resList} /> */}
         {filterRestaurant.map((restaurant) => (
-          <Link to={"/restaurant/"+restaurant.info.id} key={restaurant.info.id}><RestaurantCard  resData={restaurant} /></Link>
+          <Link
+            to={"/restaurant/" + restaurant.info.id}
+            key={restaurant.info.id}
+          >
+            <RestaurantCard resData={restaurant} />
+          </Link>
         ))}
       </div>
     </div>
