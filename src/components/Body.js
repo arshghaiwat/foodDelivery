@@ -1,8 +1,9 @@
-import RestaurantCard from "./RestaurantCard";
-import { useEffect, useState } from "react";
+import RestaurantCard, { RestaurantToPromote } from "./RestaurantCard";
+import { useContext, useEffect, useState } from "react";
 import Shimmer from "./Shimmer";
 import { Link } from "react-router-dom";
 import useOnlineStatus from "../utils/useOnlineStatus";
+import UserContext from "../utils/UserContext";
 
 const Body = () => {
   //Local State Variable - Super Powerful Variable
@@ -12,19 +13,25 @@ const Body = () => {
 
   const [searchText, setSearchText] = useState("");
 
+  const { loggedInUser, setUserName } = useContext(UserContext);
+  // const [hasIndianCuisine, SetIndianCuisine] = useState(false);
+
+  const IndianRestaurantCard = RestaurantToPromote(RestaurantCard);
+
   useEffect(() => {
     fetchData();
   }, []);
 
-  // console.log("Body rendered");
+  console.log("Body rendered");
+  //console.log(listOfRestaurants);
+  //console.log(filterRestaurant);
+
   const fetchData = async () => {
     const datas = await fetch(
       "https://www.swiggy.com/dapi/restaurants/list/v5?lat=21.1458004&lng=79.0881546&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING"
     );
 
     const json = await datas.json();
-
-    console.log(json);
 
     //optional chaining "?."
     setListOfRestaurants(
@@ -49,7 +56,7 @@ const Body = () => {
   return listOfRestaurants?.length === 0 ? (
     <Shimmer />
   ) : (
-    <div className="mx-8" >
+    <div className="">
       <div className="flex gap-0 mt-6 mb-10 mx-8">
         <div className="flex gap-2 ">
           <input
@@ -75,6 +82,12 @@ const Body = () => {
           >
             Search
           </button>
+          <input
+            className="border border-black p-1 rounded-md"
+            placeholder="enter username"
+            value={loggedInUser}
+            onChange={(e) => setUserName(e.target.value)}
+          ></input>
         </div>
         <div className="ml-7">
           <button
@@ -90,17 +103,43 @@ const Body = () => {
           </button>
         </div>
       </div>
-
+      {console.log("return")}
       <div className="m-auto flex gap-7 flex-wrap justify-center">
         {/* <RestaurantCard resData={resList} /> */}
-        {filterRestaurant.map((restaurant) => (
-          <Link
-            to={"/restaurant/" + restaurant.info.id}
-            key={restaurant.info.id}
-          >
-            <RestaurantCard resData={restaurant} />
-          </Link>
-        ))}
+        {/* {filterRestaurant.map((restaurant) => {
+          return (
+            <Link
+              to={"/restaurant/" + restaurant.info.id}
+              key={restaurant.info.id}
+            >
+              <RestaurantCard resData={restaurant} />
+            </Link>
+          );
+        })} */}
+        {/* //to promote indian restaurant */}
+        {filterRestaurant.map((restaurant) => {
+          const hasIndianCuisine = restaurant?.info?.cuisines.some(
+            (cuisine) => {
+              return cuisine.toLowerCase().includes("indian");
+              //to check for indian restaurants
+            }
+          );
+          return hasIndianCuisine ? (
+            <Link
+              to={"/restaurant/" + restaurant.info.id}
+              key={restaurant.info.id}
+            >
+              <IndianRestaurantCard resData={restaurant} />
+            </Link>
+          ) : (
+            <Link
+              to={"/restaurant/" + restaurant.info.id}
+              key={restaurant?.info?.id}
+            >
+              <RestaurantCard resData={restaurant} />
+            </Link>
+          );
+        })}
       </div>
     </div>
   );
